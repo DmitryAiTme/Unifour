@@ -1,0 +1,143 @@
+#button-text {
+  height: 3rem;
+  width: 13vw;
+  font: inherit;
+  font-size: 80%;
+  background-color: transparent;
+  border-width: 0.4em;
+  border-color: black;
+  border-style: solid;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-radius: 10px 10px 10px 10px;
+}
+
+#button-connect {
+  height: 3rem;
+  width: 13vw;
+  font: inherit;
+  font-size: 80%;
+  background-color: transparent;
+  border-width: 0.55em;
+  border-color: black;
+  border-style: solid;
+  font-weight: bolder;
+  border-radius: 10px 0px 10px 0px;
+}
+
+#button-socials {
+  width: 2.5vw;
+  aspect-ratio: 1 / 1;
+  font: inherit;
+  border: none;
+  font-size: 80%;
+  background-color: black;
+  border-radius: 3px 3px 3px 3px;
+}
+
+#button-image {
+  width: 8vw;
+  aspect-ratio: 1 / 1;
+  font: inherit;
+  border: none;
+  font-size: 80%;
+  background-color: transparent;
+  border-width: 0.4em;
+  border-color: black;
+  border-style: solid;
+  border-radius: 10px 10px 10px 10px;
+}
+
+#menu-header {
+  margin: 1rem 0 0 2.5vw;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 85vw;
+}
+
+#menu-side {
+  margin: 2.5rem 0 0 2.5%;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5vw;
+  width: 5vw;
+}
+
+#section-left {
+  margin: 1rem 0 0 2.5%;
+  border-width: 0.4em;
+  border-color: black;
+  border-style: solid;
+  border-radius: 10px 10px 10px 10px;
+  width: 40vw;
+  height: 75vh;
+}
+
+#section-left menu {
+  margin: 1rem 0 0 5%;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+}
+
+#section-right {
+  margin: 1rem 0 0 2.5%;
+  border-width: 0.4em;
+  border-color: black;
+  border-style: solid;
+  border-radius: 10px 10px 10px 10px;
+  width: 40vw;
+  height: 75vh;
+}
+
+#menu-footer {
+  margin: 1rem 0 0 10vw;
+  padding: 0;
+  display: flex;
+  gap: 0.5vw;
+  width: 85vw;
+}
+
+#button-output {
+  text-align: center;
+  font: inherit;
+  font-size: 80%;
+  background-color: transparent;
+  border-width: 0.4em;
+  border-color: black;
+  border-style: solid;
+  font-weight: bold;
+  border-radius: 10px 10px 10px 10px;
+  padding: 0.75rem;
+}
+
+#chat {
+  display: flex;
+  flex-direction: column;
+  width: 95%;
+  height: 95%;
+  margin: 2.5% 0 0 2.5%;
+  border-width: 0.1em;
+  border-color: transparent;
+  border-style: solid;
+  align-items: center;
+}
+
+#chat div {
+  width: 100%;
+  height: 90%;
+}
+
+#chat input {
+  width: 95%;
+  height: 7%;
+  background-color: transparent;
+  border-width: 0.4em;
+  border-color: black;
+  border-style: solid;
+  font-weight: bold;
+  border-radius: 7px;
+}
