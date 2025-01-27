@@ -8,8 +8,29 @@
   border-color: black;
   border-style: solid;
   font-weight: bolder;
+  color: black;
   text-transform: uppercase;
-  border-radius: 10px 10px 10px 10px;
+  border-radius: 10px;
+}
+
+#button-text:hover {
+  border-color: #004400;
+  color: #004400;
+  border-radius: 15px;
+  animation: 0.35s button-text-hover;
+}
+
+@keyframes button-text-hover {
+  from {
+    border-radius: 10px;
+    color: black;
+    border-color: black;
+  }
+  to {
+    border-radius: 15px;
+    color: #004400;
+    border-color: #004400;
+  }
 }
 
 #button-connect {
@@ -20,9 +41,30 @@
   background-color: transparent;
   border-width: 0.55em;
   border-color: black;
+  color: black;
   border-style: solid;
   font-weight: bolder;
   border-radius: 10px 0px 10px 0px;
+}
+
+#button-connect:hover {
+  border-color: #004400;
+  color: #004400;
+  border-radius: 15px 0px 15px 0px;
+  animation: 0.35s button-connect-hover;
+}
+
+@keyframes button-connect-hover {
+  from {
+    border-radius: 10px 0px 10px 0px;
+    color: black;
+    border-color: black;
+  }
+  to {
+    border-radius: 15px 0px 15px 0px;
+    color: #004400;
+    border-color: #004400;
+  }
 }
 
 #button-socials {

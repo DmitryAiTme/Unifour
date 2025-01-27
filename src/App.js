@@ -17,7 +17,7 @@ export default function App() {
   return (
     <div className="App">
       <div className="row">
-        <img className='App-logo' src={ logo } />
+        <img className='App-logo' src={ logo } alt="pepega logo" />
         <HeaderMenu></HeaderMenu>
       </div>
       <div className="row">
