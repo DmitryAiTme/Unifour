@@ -1,4 +1,5 @@
-import Button from "./Button";
+import React from "react";
+import Button from "./Button.jsx";
 import "./controlsStyle.css";
 
 export default function FooterMenu() {

@@ -1,3 +1,4 @@
+import React from "react";
 import "./controlsStyle.css";
 import logo from "../logo.svg";
 
@@ -24,5 +25,11 @@ export default function Button({ mode, text, onClick }) {
     );
   } else if (mode === "output") {
     return <label id="button-output"> {text} </label>;
+  } else if (mode === "logo") {
+    return (
+      <button id="button-logo" onClick={onClick}>
+        <img src={logo} alt={text} />
+      </button>
+    );
   }
 }
