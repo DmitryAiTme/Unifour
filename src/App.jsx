@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage.jsx";
 import ChartPage from "./pages/ChartPage.jsx";
 import AgentsPage from "./pages/AgentsPage.jsx";
 import RoadmapPage from "./pages/RoadmapPage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
 
 export default function App() {
   const homePage = React.useRef(null);
@@ -28,14 +29,15 @@ export default function App() {
   }
 
   return (
-    <>
+    <section className="App">
       <HeaderMenu scrollToPage={scrollToPage} />
       <div className="body">
         <HomePage reference={homePage} />
-        <ChartPage reference={chartPage} />
+        <AboutPage reference={chartPage} />
+        {/*<ChartPage reference={chartPage} />
         <AgentsPage reference={agentsPage} />
-        <RoadmapPage reference={roadmapPage} />
+        <RoadmapPage reference={roadmapPage} />*/}
       </div>
-    </>
+    </section>
   );
 }
