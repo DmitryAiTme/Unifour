@@ -1,12 +1,12 @@
 @property --default-button-border-color {
   syntax: "<color>";
   inherits: false;
-  initial-value: #CCAACC;
+  initial-value: #888888;
 }
 @property --default-button-text-color {
   syntax: "<color>";
   inherits: false;
-  initial-value: #CCAACC;
+  initial-value: white;
 }
 @property --default-hover-button-border-color {
   syntax: "<color>";
@@ -21,12 +21,17 @@
 @property --section-border-color {
   syntax: "<color>";
   inherits: false;
-  initial-value: #CCAACC;
+  initial-value: #888888;
 }
 @property --section-text-color {
   syntax: "<color>";
   inherits: false;
-  initial-value: #CCAACC;
+  initial-value: white;
+}
+@property --default-pressed-button-border-color {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #771177;
 }
 
 #button-text {
@@ -101,13 +106,19 @@
 }
 
 #button-socials {
-  width: 2.5vw;
+  width: 5vw;
+  height: 5vw;
   aspect-ratio: 1 / 1;
   font: inherit;
   border: none;
   font-size: 80%;
-  background-color: var(--default-button-text-color);
-  border-radius: 3px 3px 3px 3px;
+  background-color: #0a0c17;
+  border-radius: 10px 10px 10px 10px;
+}
+#button-socials img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 #button-image {
@@ -123,8 +134,31 @@
   border-style: solid;
   border-radius: 10px 10px 10px 10px;
 }
+.active {
+  border-color: var(--default-pressed-button-border-color);
+}
 
 #button-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#button-image-active {
+  width: 8vw;
+  height: 8vw;
+  aspect-ratio: 1 / 1;
+  font: inherit;
+  border: none;
+  font-size: 80%;
+  background-color: transparent;
+  border-width: 0.4em;
+  border-color: var(--default-pressed-button-border-color);
+  border-style: solid;
+  border-radius: 10px 10px 10px 10px;
+}
+
+#button-image-active img {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -158,29 +192,37 @@
   font-size: 80%;
   background-color: transparent;
   width: 5%;
+  height: 85%;
 }
 
 #button-logo img {
   pointer-events: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 #menu-side {
+  border-radius: 10px;
   margin: 2.5rem 0 0 2.5%;
-  padding: 0;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5vw;
+  position: fixed;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 9.7vh;
   width: 5vw;
+  background-color: #555555AA;
+  z-index: 1;
 }
 
 #section-left {
-  margin: 1rem 0 0 2.5%;
+  margin: 1rem 0 0 10vw;
   border-width: 0.4em;
   border-color: var(--section-border-color);
   border-style: solid;
   border-radius: 10px 10px 10px 10px;
   width: 40vw;
   height: 75vh;
+  background-image: url("../../assets/space.png");
 }
 
 #section-left menu {
@@ -199,6 +241,7 @@
   border-radius: 10px 10px 10px 10px;
   width: 40vw;
   height: 75vh;
+  background-image: url("../../assets/space.png");
 }
 
 #menu-footer {
@@ -244,6 +287,7 @@
   width: 95%;
   height: 7%;
   background-color: transparent;
+  color: var(--section-text-color);
   border-width: 0.4em;
   border-color: var(--section-border-color);
   border-style: solid;
@@ -255,12 +299,12 @@
   width: 95%;
   height: calc(100% - 8rem);
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .big-head {
-  width: 100%;
-  height: 100%;
+  width: calc(40vw * 0.95);
+  height: calc(75vh - 8rem);
+  z-index: 0;
   object-fit: contain;
+  position:absolute;
 }

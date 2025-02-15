@@ -6,7 +6,7 @@ export default function HeaderMenu({ scrollToPage }) {
   const buttonProps = [
     { text: "logo", mode: "logo", onClick: goToHome },
     { text: "⬆", mode: "text", onClick: goToCharts },
-    { text: "AI Agents", mode: "text", onClick: goToAgents },
+    { text: "AI Agents", mode: "text", onClick: goToHome },
     { text: "Roadmap", mode: "text", onClick: goToRoadmap },
     { text: "Whitepaper", mode: "text" },
     { text: "Github", mode: "text", onClick: goToGH },
@@ -26,12 +26,7 @@ export default function HeaderMenu({ scrollToPage }) {
   function goToCharts() {
     scrollToPage("Chart page");
   }
-  function goToAgents() {
-    scrollToPage("Agents page");
-  }
-  function goToRoadmap() {
-    scrollToPage("Roadmap page");
-  }
+  function goToRoadmap() {}
 }
 
 function goToGH() {
