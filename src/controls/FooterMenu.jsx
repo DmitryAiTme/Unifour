@@ -1,12 +1,11 @@
 import React from "react";
 import Button from "./Button.jsx";
-import "./controlsStyle.css";
 
 export default function FooterMenu() {
   const address = "BGtE6A8uvGboV7bSiyyMKuy2NQDYQLc4nnSpu25upump";
   const buttonNames = [
     { text: address, mode: "output" },
-    { text: "copy", mode: "text", onClick: () => copyAddress(address) },
+    { text: "copy", mode: "text", fixed: false, onClick: () => copyAddress(address) },
   ];
   const buttons = buttonNames.map((props, index) => (
     <Button key={index} {...props} />

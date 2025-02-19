@@ -1,48 +1,51 @@
 import React from "react";
 import "./controlsStyle.css";
-import logo from "../logo.png";
-import devix from "../../assets/devix/Head_face.png";
-import postix from "../../assets/postix/Head_face.png";
-import flipso from "../../assets/flipso/Head_face.png";
-import teachy from "../../assets/teachy/Head_face.png";
 
-import telegram from "../../assets/socials/telegram.webp";
-import twitter from "../../assets/socials/x.png";
-import dex from "../../assets/socials/dex-screener.png";
-import pump from "../../assets/socials/pump-fun.png";
-
-export default function Button({ mode, text, active, onClick }) {
+export default function Button({ mode, text, active, fixed=true, onClick }) {
+  const logo = "logo.png";
+  const characters = {
+    devix: "assets/devix/Head_face.png",
+    postix: "assets/postix/Head_face.png",
+    flipso: "assets/flipso/Head_face.png",
+    teachy: "assets/teachy/Head_face.png"
+  };
+  const socials = {
+    telegram: "assets/socials/telegram.webp",
+    twitter: "assets/socials/x.png",
+    dex: "assets/socials/dex-screener.png",
+    pump: "assets/socials/pump-fun.png"
+  };
   if (mode === "text") {
     return (
-      <button id="button-text" onClick={onClick}>
+      <button className={`button button-text ${fixed ? "fixed-size" : "dynamic-size"}`} onClick={onClick} >
         {text}
       </button>
     );
   } else if (mode === "connect") {
-    return <button id="button-connect"> {text} </button>;
+    return <button className={`button button-connect ${fixed ? "fixed-size" : "dynamic-size"}`}> {text} </button>;
   } else if (mode === "socials") {
     return (
-      <button id="button-socials">
-        {text === "telegram" && <img src={telegram} alt={text} />}
-        {text === "x" && <img src={twitter} alt={text} />}
-        {text === "dex" && <img src={dex} alt={text} />}
-        {text === "pump" && <img src={pump} alt={text} />}
+      <button className={`button button-socials ${text}`} onClick={onClick}>
+        {text === "telegram" && <img src={socials.telegram} alt={text} />}
+        {text === "x" && <img src={socials.twitter} alt={text} />}
+        {text === "dex" && <img src={socials.dex} alt={text} />}
+        {text === "pump" && <img src={socials.pump} alt={text} />}
       </button>
     );
   } else if (mode === "image") {
     return (
-      <button id={`button-image${active ? '-active' : ''}`} onClick={onClick}>
-        {text === "devix" && <img src={devix} alt={text} />}
-        {text === "postix" && <img src={postix} alt={text} />}
-        {text === "flipso" && <img src={flipso} alt={text} />}
-        {text === "teachy" && <img src={teachy} alt={text} />}
+      <button className={`button button-image ${active ? "active" : "default"}`} onClick={onClick}>
+        {text === "devix" && <img src={characters.devix} alt={text} />}
+        {text === "postix" && <img src={characters.postix} alt={text} />}
+        {text === "flipso" && <img src={characters.flipso} alt={text} />}
+        {text === "teachy" && <img src={characters.teachy} alt={text} />}
       </button>
     );
   } else if (mode === "output") {
-    return <label id="button-output"> {text} </label>;
+    return <label className="button button-output"> {text} </label>;
   } else if (mode === "logo") {
     return (
-      <button id="button-logo" onClick={onClick}>
+      <button className="button button-logo" onClick={onClick}>
         <img src={logo} alt={text} />
       </button>
     );

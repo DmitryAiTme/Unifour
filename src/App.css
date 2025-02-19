@@ -1,5 +1,9 @@
-.App {
-   background-image: url("./assets/dogs.png");
+.App-img {
+  position: absolute;
+  z-index: -1;
+  height: 230%;
+  max-width: 100%;
+  object-fit: cover;
 }
 
 .App-header {
@@ -17,19 +21,9 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .row {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
 }

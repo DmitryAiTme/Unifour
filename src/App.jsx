@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef, useState, useEffect } from "react";
 import "./App.css";
 import HeaderMenu from "./pages/HeaderMenu.jsx";
 import HomePage from "./pages/HomePage.jsx";
@@ -6,8 +6,9 @@ import AboutPage from "./pages/AboutPage.jsx";
 import Footer from "./pages/Footer.jsx";
 
 export default function App() {
-  const homePage = React.useRef(null);
-  const chartPage = React.useRef(null);
+  const homePage = useRef(null);
+  const chartPage = useRef(null);
+  const background = "assets/dogs.png";
 
   function scrollToPage(name) {
     let page = null;
@@ -22,6 +23,7 @@ export default function App() {
 
   return (
     <section className="App">
+      <img className="App-img" src={background} />
       <HeaderMenu scrollToPage={scrollToPage} />
       <div className="body">
         <HomePage reference={homePage} />

@@ -1,14 +1,15 @@
-import React from 'react';
+import { useRef } from 'react';
 import Button from "./Button.jsx";
 import HeadBuilder from "./HeadBuilder.jsx";
 import "./controlsStyle.css";
-import devix from "../../assets/devix/Head_face.png";
-import postix from "../../assets/postix/Head_face.png";
-import flipso from "../../assets/flipso/Head_face.png";
-import teachy from "../../assets/teachy/Head_face.png";
 
-export default function LeftSection() {
-  const [ currentMode, setCurrentMode ] = React.useState("devix");
+export default function LeftSection({ currentMode, setCurrentMode }) {
+  const devix = "assets/devix/Head_face.png";
+  const postix = "assets/postix/Head_face.png";
+  const flipso = "assets/flipso/Head_face.png";
+  const teachy = "assets/teachy/Head_face.png";
+  const sectionBackground = "assets/space.png";
+  const headRef = useRef();
   const buttonProps = [
     { text: "flipso", mode: "image", onClick: () => clickHandle("flipso"), active: currentMode==="flipso" },
     { text: "postix", mode: "image", onClick: () => clickHandle("postix"), active: currentMode==="postix" },
@@ -20,12 +21,14 @@ export default function LeftSection() {
   ));
   function clickHandle(mode) {
     setCurrentMode(mode);
+    headRef.current.setMode()
   }
   return (
     <section id="section-left">
+      <img className="background" src={sectionBackground} />
       <menu> {sectionButtons} </menu>
       <section className="head-section">
-        {currentMode==="devix" ? <HeadBuilder /> : <img className="big-head" src={ currentMode==="postix" ? postix : currentMode==="flipso" ? flipso : currentMode==="devix" ? devix : teachy } alt="mini pepega" />}
+        <HeadBuilder mode={currentMode} ref={headRef} />
       </section>
     </section>
   );

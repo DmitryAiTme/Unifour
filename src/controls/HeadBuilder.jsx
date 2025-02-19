@@ -1,68 +1,132 @@
-import devixHead from "../../assets/devix/Head.png";
-import devixEyes1 from "../../assets/devix/eyes/Eyes1.png";
-import devixEyes2 from "../../assets/devix/eyes/Eyes2.png";
-import devixEyes3 from "../../assets/devix/eyes/Eyes3.png";
-import devixEyes4 from "../../assets/devix/eyes/Eyes4.png";
-import devixMouth1 from "../../assets/devix/mouth/Mouth1.png";
-import devixMouth2 from "../../assets/devix/mouth/Mouth2.png";
-import devixMouth3 from "../../assets/devix/mouth/Mouth3.png";
-import devixMouth4 from "../../assets/devix/mouth/Mouth4.png";
-import devixMouth5 from "../../assets/devix/mouth/Mouth5.png";
-import devixMouth6 from "../../assets/devix/mouth/Mouth6.png";
-import devixMouth7 from "../../assets/devix/mouth/Mouth7.png";
-import devixMouth8 from "../../assets/devix/mouth/Mouth8.png";
+import React, { useState, useEffect, useImperativeHandle, useRef } from 'react';
 
-import React, { useState, useEffect } from 'react';
+export default function HeadBuilder({ mode, ref }) {
+  const getAssetPaths = (currentMode) => ({
+    head: `assets/${currentMode}/Head.png`,
+    eyes: {
+      eyes1: `assets/${currentMode}/eyes/Eyes1.png`,
+      eyes2: `assets/${currentMode}/eyes/Eyes2.png`,
+      eyes3: `assets/${currentMode}/eyes/Eyes3.png`,
+      eyes4: `assets/${currentMode}/eyes/Eyes4.png`,
+    },
+    mouth: {
+      mouth1: `assets/${currentMode}/mouth/Mouth1.png`,
+      mouth2: `assets/${currentMode}/mouth/Mouth2.png`,
+      mouth3: `assets/${currentMode}/mouth/Mouth3.png`,
+      mouth4: `assets/${currentMode}/mouth/Mouth4.png`,
+      mouth5: `assets/${currentMode}/mouth/Mouth5.png`,
+      mouth6: `assets/${currentMode}/mouth/Mouth6.png`,
+      mouth7: `assets/${currentMode}/mouth/Mouth7.png`,
+      mouth8: `assets/${currentMode}/mouth/Mouth8.png`,
+    }
+  });
 
-export default function HeadBuilder() {
-  const [eyes, setEyes] = useState(devixEyes2);
-  const [mouth, setMouth] = useState(devixMouth1);
-  const eyesSequence = [
-    { img: devixEyes1, delay: 60 },
-    { img: devixEyes3, delay: 60 },
-    { img: devixEyes4, delay: 60 },
-    { img: devixEyes3, delay: 60 },
-    { img: devixEyes1, delay: 60 },
-    { img: devixEyes2, delay: 60 },
-  ];
-  const mouthSequence = [
-    { img: devixMouth2, delay: 150 },
-    { img: devixMouth3, delay: 150 },
-    { img: devixMouth4, delay: 150 },
-    { img: devixMouth5, delay: 150 },
-    { img: devixMouth6, delay: 150 },
-    { img: devixMouth7, delay: 150 },
-    { img: devixMouth8, delay: 150 },
-    { img: devixMouth1, delay: 150 },
-  ];
+  const [assets, setAssets] = useState(getAssetPaths(mode));
+  const [eyes, setEyes] = useState(assets.eyes.eyes2);
+  const [mouth, setMouth] = useState(assets.mouth.mouth1);
+  const [eyesSequence, setEyesSequence] = useState([]);
+  const [mouthSequence, setMouthSequence] = useState([]);
+
+  const blinkIntervalRef = useRef(null);
+  const speakIntervalRef = useRef(null);
+  const animationTimeoutsRef = useRef([]);
+  const initialAnimationTimeoutsRef = useRef([]);
+
+  const updateSequences = (currentAssets) => {
+    setEyesSequence([
+      { img: currentAssets.eyes.eyes1, delay: 60 },
+      { img: currentAssets.eyes.eyes3, delay: 60 },
+      { img: currentAssets.eyes.eyes4, delay: 60 },
+      { img: currentAssets.eyes.eyes3, delay: 60 },
+      { img: currentAssets.eyes.eyes1, delay: 60 },
+      { img: currentAssets.eyes.eyes2, delay: 60 },
+    ]);
+    setMouthSequence([
+      { img: currentAssets.mouth.mouth2, delay: 100 },
+      { img: currentAssets.mouth.mouth3, delay: 100 },
+      { img: currentAssets.mouth.mouth4, delay: 100 },
+      { img: currentAssets.mouth.mouth5, delay: 100 },
+      { img: currentAssets.mouth.mouth6, delay: 100 },
+      { img: currentAssets.mouth.mouth7, delay: 100 },
+      { img: currentAssets.mouth.mouth8, delay: 100 },
+      { img: currentAssets.mouth.mouth1, delay: 100 },
+    ]);
+  };
+
+  const resetAnimations = () => {
+    if (blinkIntervalRef.current) {
+      clearInterval(blinkIntervalRef.current);
+      blinkIntervalRef.current = null;
+    }
+    if (speakIntervalRef.current) {
+      clearInterval(speakIntervalRef.current);
+      speakIntervalRef.current = null;
+    }
+    animationTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    animationTimeoutsRef.current = [];
+    initialAnimationTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    initialAnimationTimeoutsRef.current = [];
+    setEyes(assets.eyes.eyes2);
+    setMouth(assets.mouth.mouth1);
+  };
+
   function animation(sequence, setter) {
     let currentIndex = 0;
     function playNextFrame() {
       if (currentIndex < sequence.length) {
         setter(sequence[currentIndex].img);
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
           currentIndex++;
           playNextFrame();
         }, sequence[currentIndex].delay);
+        animationTimeoutsRef.current.push(timeout);
       }
     }
     playNextFrame();
   }
 
   useEffect(() => {
-    const blinkInterval = setInterval(() => animation(eyesSequence, setEyes), 5000);
-    const speakInterval = setInterval(() => animation(mouthSequence, setMouth), 2500);
-    return () => {
-      clearInterval(blinkInterval);
-      clearInterval(speakInterval);
-    };
-  }, []);
+    const newAssets = getAssetPaths(mode);
+    setAssets(newAssets);
+    resetAnimations();
+    updateSequences(newAssets);
+  }, [mode]);
+
+  useEffect(() => {
+    if (eyesSequence.length && mouthSequence.length) {
+      resetAnimations();
+      const eyesTimeout = setTimeout(() => {
+        animation(eyesSequence, setEyes);
+        blinkIntervalRef.current = setInterval(() => animation(eyesSequence, setEyes), 5000);
+      }, 5000);
+
+      const mouthTimeout = setTimeout(() => {
+        animation(mouthSequence, setMouth);
+        speakIntervalRef.current = setTimeout(() => animation(mouthSequence, setMouth), 800/*2500*/);
+      }, 800/*2500*/);
+
+      initialAnimationTimeoutsRef.current = [eyesTimeout, mouthTimeout];
+
+      return () => {
+        resetAnimations();
+      };
+    }
+  }, [eyesSequence, mouthSequence]);
+
+  useImperativeHandle(ref, () => ({
+    setMode() {
+      const newAssets = getAssetPaths(mode);
+      setAssets(newAssets);
+      resetAnimations();
+      updateSequences(newAssets);
+    }
+  }), [mode]);
 
   return (
-    <section>
-      <img className="big-head" src={devixHead} alt="devix head" />
-      <img className="big-head" src={eyes} alt="devix eyes" />
-      <img className="big-head" src={mouth} alt="devix mouth" />
-    </section>
+    <div className="relative">
+      <img src={assets.head} alt="Head" className="big-head" />
+      <img src={eyes} alt="Eyes" className="big-head" />
+      <img src={mouth} alt="Mouth" className="big-head" />
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 .page {
   padding: 70px 0px 0px 0px;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   background-color: #00000099;
 }
 
@@ -26,9 +26,10 @@
 }
 
 .table {
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 80%;
   object-fit: contain;
+  padding: 0px 10% 0px 10%;
 }
 
 .footer {
@@ -40,4 +41,10 @@
   color: #D2D2D2;
   text-align: center;
   font-weight: bolder;
+}
+
+.post img {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
 }
