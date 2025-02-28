@@ -4,11 +4,16 @@ import HeaderMenu from "./pages/HeaderMenu.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import Footer from "./pages/Footer.jsx";
+import LoadingScreen from "./pages/LoadingScreen.jsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export default function App() {
   const homePage = useRef(null);
   const chartPage = useRef(null);
   const background = "assets/dogs.png";
+  const [isLoading, setIsLoading] = useState(true);
 
   function scrollToPage(name) {
     let page = null;
@@ -21,15 +26,55 @@ export default function App() {
     page.current?.scrollIntoView({ behavior: "smooth" });
   }
 
+  const handleFinishLoading = () => {
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    const imageUrls = [
+      background,
+      "logo.png",
+      "assets/devix/Head_face.png",
+      "assets/postix/Head_face.png",
+      "assets/flipso/Head_face.png",
+      "assets/teachy/Head_face.png",
+      "assets/space.png",
+    ];
+
+    const preloadImages = async () => {
+      const promises = imageUrls.map((url) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = url;
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+      });
+
+      try {
+        await Promise.all(promises);
+      } catch (error) {
+        console.error("Failed to preload images:", error);
+      }
+    };
+
+    preloadImages();
+  }, []);
+
   return (
-    <section className="App">
-      <img className="App-img" src={background} />
-      <HeaderMenu scrollToPage={scrollToPage} />
-      <div className="body">
-        <HomePage reference={homePage} />
-        <AboutPage reference={chartPage} />
-        <Footer />
-      </div>
-    </section>
+    <>
+      {isLoading && <LoadingScreen onFinishLoading={handleFinishLoading} />}
+      <section className="App">
+        <QueryClientProvider client={queryClient}>
+          <img className="App-img" src={background} alt="dogs background" />
+          <HeaderMenu scrollToPage={scrollToPage} />
+          <div className="body">
+            <HomePage reference={homePage} />
+            <AboutPage reference={chartPage} />
+            <Footer />
+          </div>
+        </QueryClientProvider>
+      </section>
+    </>
   );
 }

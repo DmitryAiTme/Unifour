@@ -2,10 +2,15 @@ import React from "react";
 import Button from "./Button.jsx";
 
 export default function FooterMenu() {
-  const address = "BGtE6A8uvGboV7bSiyyMKuy2NQDYQLc4nnSpu25upump";
+  const address = "Contract Address will drop at launch!";
   const buttonNames = [
     { text: address, mode: "output" },
-    { text: "copy", mode: "text", fixed: false, onClick: () => copyAddress(address) },
+    {
+      text: "copy",
+      mode: "text",
+      fixed: false,
+      onClick: () => copyAddress(address),
+    },
   ];
   const buttons = buttonNames.map((props, index) => (
     <Button key={index} {...props} />

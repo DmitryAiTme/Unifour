@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react';
-
 export default function TwitterModule({ posts }) {
-
   function splitter(text) {
     const arr = [];
     const texts = text.split("\\n");
@@ -13,9 +10,11 @@ export default function TwitterModule({ posts }) {
     <div className="page">
       {posts.map((post, index) => (
         <div className="post" key={index}>
-            <ul style={{whiteSpace: "pre-wrap"}}> { splitter(post.title) } <img src={post.content} /> </ul>
+          <ul style={{ whiteSpace: "pre-wrap" }}>
+            {splitter(post.title)} <img src={post.content} />
+          </ul>
         </div>
       ))}
     </div>
   );
-};
+}

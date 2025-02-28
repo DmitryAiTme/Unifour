@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { useState, useEffect, useImperativeHandle, useRef } from "react";
 
 export default function HeadBuilder({ mode, ref }) {
   const getAssetPaths = (currentMode) => ({
@@ -18,20 +18,8 @@ export default function HeadBuilder({ mode, ref }) {
       mouth6: `assets/${currentMode}/mouth/Mouth6.png`,
       mouth7: `assets/${currentMode}/mouth/Mouth7.png`,
       mouth8: `assets/${currentMode}/mouth/Mouth8.png`,
-    }
+    },
   });
-
-  const [assets, setAssets] = useState(getAssetPaths(mode));
-  const [eyes, setEyes] = useState(assets.eyes.eyes2);
-  const [mouth, setMouth] = useState(assets.mouth.mouth1);
-  const [eyesSequence, setEyesSequence] = useState([]);
-  const [mouthSequence, setMouthSequence] = useState([]);
-
-  const blinkIntervalRef = useRef(null);
-  const speakIntervalRef = useRef(null);
-  const animationTimeoutsRef = useRef([]);
-  const initialAnimationTimeoutsRef = useRef([]);
-
   const updateSequences = (currentAssets) => {
     setEyesSequence([
       { img: currentAssets.eyes.eyes1, delay: 60 },
@@ -52,7 +40,6 @@ export default function HeadBuilder({ mode, ref }) {
       { img: currentAssets.mouth.mouth1, delay: 100 },
     ]);
   };
-
   const resetAnimations = () => {
     if (blinkIntervalRef.current) {
       clearInterval(blinkIntervalRef.current);
@@ -62,13 +49,24 @@ export default function HeadBuilder({ mode, ref }) {
       clearInterval(speakIntervalRef.current);
       speakIntervalRef.current = null;
     }
-    animationTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    animationTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
     animationTimeoutsRef.current = [];
-    initialAnimationTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    initialAnimationTimeoutsRef.current.forEach((timeout) =>
+      clearTimeout(timeout)
+    );
     initialAnimationTimeoutsRef.current = [];
     setEyes(assets.eyes.eyes2);
     setMouth(assets.mouth.mouth1);
   };
+  const [assets, setAssets] = useState(getAssetPaths(mode));
+  const [eyes, setEyes] = useState(assets.eyes.eyes2);
+  const [mouth, setMouth] = useState(assets.mouth.mouth1);
+  const [eyesSequence, setEyesSequence] = useState([]);
+  const [mouthSequence, setMouthSequence] = useState([]);
+  const blinkIntervalRef = useRef(null);
+  const speakIntervalRef = useRef(null);
+  const animationTimeoutsRef = useRef([]);
+  const initialAnimationTimeoutsRef = useRef([]);
 
   function animation(sequence, setter) {
     let currentIndex = 0;
@@ -97,13 +95,19 @@ export default function HeadBuilder({ mode, ref }) {
       resetAnimations();
       const eyesTimeout = setTimeout(() => {
         animation(eyesSequence, setEyes);
-        blinkIntervalRef.current = setInterval(() => animation(eyesSequence, setEyes), 5000);
+        blinkIntervalRef.current = setInterval(
+          () => animation(eyesSequence, setEyes),
+          5000
+        );
       }, 5000);
 
       const mouthTimeout = setTimeout(() => {
         animation(mouthSequence, setMouth);
-        speakIntervalRef.current = setTimeout(() => animation(mouthSequence, setMouth), 800/*2500*/);
-      }, 800/*2500*/);
+        speakIntervalRef.current = setTimeout(
+          () => animation(mouthSequence, setMouth),
+          800
+        );
+      }, 800);
 
       initialAnimationTimeoutsRef.current = [eyesTimeout, mouthTimeout];
 
@@ -113,14 +117,18 @@ export default function HeadBuilder({ mode, ref }) {
     }
   }, [eyesSequence, mouthSequence]);
 
-  useImperativeHandle(ref, () => ({
-    setMode() {
-      const newAssets = getAssetPaths(mode);
-      setAssets(newAssets);
-      resetAnimations();
-      updateSequences(newAssets);
-    }
-  }), [mode]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      setMode() {
+        const newAssets = getAssetPaths(mode);
+        setAssets(newAssets);
+        resetAnimations();
+        updateSequences(newAssets);
+      },
+    }),
+    [mode]
+  );
 
   return (
     <div className="relative">

@@ -1,61 +1,61 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from "react";
 import MessageBubble from "./MessageBubble.jsx";
 import Button from "./Button.jsx";
+import "./ChatAnimation.css";
 
 export default function RightSection({ currentMode }) {
-  const modes = ["flipso", "postix", "teachy", "devix"];
   const messageInput = useRef();
+  const chatContainerRef = useRef(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const API_URL = 'http://localhost:3001/api';
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [previousMode, setPreviousMode] = useState(null);
+  const apiUrl = "https://unifour.io/backend/api";
   const sectionBackground = "assets/space.png";
 
   async function connectToDB() {
+    console.log("connecting");
     try {
-      setLoading(true);
-      const response = await fetch(`${API_URL}/posts`);
+      const response = await fetch(`${apiUrl}/posts2`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      let data = await response.json();
-      data = sortByDate(data);
-      console.log(data);
-      setPosts(data);
+      const data = await response.json();
+      setPosts(sortByDate(data));
+      console.log("Posts loaded:", data);
     } catch (err) {
-      setError(err.message);
+      console.error("API Error:", err);
     } finally {
       setLoading(false);
     }
   }
-  function sortByDate(items) {
-    let sortedItems = items;
-    let i = 0;
-    let j = 0;
-    for (i = 0; i < items.length; ++i) {
-      for (j = i+1; j < items.length; ++j) {
-        if (sortedItems[i].created_at > sortedItems[j].created_at) {
-          const buffer = {...sortedItems[i]};
-          sortedItems[i] = {...sortedItems[j]};
-          sortedItems[j] = buffer;
-        }
-      }
-    }
-    return sortedItems;
-  }
-  function messageHandler(message) {
-    if (message.includes("post")) {
 
-        {/*posts.map((post, index) => (
-          <div className="post" key={index}>
-            <ul style={{whiteSpace: "pre-wrap"}}> { splitter(post.title) } <img src={post.content} /> </ul>
-          </div>
-      ))*/}
-      setMessages(oldMessages => {
-        const newMessages = {...oldMessages};
-        posts.map((post, index) => (newMessages[currentMode].push({ id: oldMessages.length, key: index, text: post.title, sender: 'other' })));
-        return newMessages;
-      } )
+  function sortByDate(items) {
+    return [...items].sort(
+      (a, b) => new Date(a.created_at) - new Date(b.created_at)
+    );
+  }
+
+  function messageHandler(message) {
+    if (message.toLowerCase().includes("post") && currentMode === "postix") {
+      setMessages((oldMessages) => {
+        const lastId =
+          oldMessages.postix.length > 0
+            ? Math.max(...oldMessages.postix.map((msg) => msg.uniqueId || 0))
+            : 0;
+
+        return {
+          ...oldMessages,
+          postix: [
+            ...oldMessages.postix,
+            ...posts.map((post, index) => ({
+              ...post,
+              sender: "other",
+              uniqueId: lastId + index + 1,
+            })),
+          ],
+        };
+      });
     }
   }
 
@@ -63,44 +63,180 @@ export default function RightSection({ currentMode }) {
     devix: [],
     postix: [],
     flipso: [],
-    teachy: []
+    teachy: [],
   });
-  if (messages[currentMode].length === 0) {
-    setMessages( oldMessages => {
-      const newMessages = {...oldMessages};
-      newMessages[currentMode] = [{ id: 0, text: `Hello user! My name is ${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}`, sender: 'other' }]
-      console.log(newMessages[currentMode]);
-      return newMessages;
-    } );
-  }
+
+  useEffect(() => {
+    if (previousMode && previousMode !== currentMode) {
+      setIsAnimating(false);
+      setTimeout(() => {
+        setIsAnimating(true);
+        const animationTimeout = setTimeout(() => {
+          if (messages[currentMode].length === 0) {
+            setMessages((oldMessages) => ({
+              ...oldMessages,
+              [currentMode]: [
+                {
+                  uniqueId: 1,
+                  description: `Hello user! My name is ${
+                    currentMode.charAt(0).toUpperCase() + currentMode.slice(1)
+                  }`,
+                  sender: "other",
+                },
+              ],
+            }));
+          }
+
+          setIsAnimating(false);
+        }, 500);
+
+        return () => clearTimeout(animationTimeout);
+      }, 0);
+    } else {
+      if (messages[currentMode].length === 0) {
+        setMessages((oldMessages) => ({
+          ...oldMessages,
+          [currentMode]: [
+            {
+              uniqueId: 1,
+              description: `Hello user! My name is ${
+                currentMode.charAt(0).toUpperCase() + currentMode.slice(1)
+              }`,
+              sender: "other",
+            },
+          ],
+        }));
+      }
+    }
+
+    setPreviousMode(currentMode);
+  }, [currentMode]);
+
+  const triggerAvatarAnimation = () => {
+    const avatar = document.querySelector(".chat-avatar");
+    if (avatar) {
+      avatar.style.transform = "scale(1.2)";
+      setTimeout(() => {
+        avatar.style.transform = "scale(1)";
+      }, 300);
+    }
+  };
+
   function sendMessage() {
-    if (messageInput.current.value !== '') {
-      setMessages( oldMessages => {
-          const newMessages = {...oldMessages};
-          newMessages[currentMode].push({ id: oldMessages.length, text: messageInput.current.value, sender: 'user' })
-          return newMessages;
-        } )
-      messageInput.current.value = '';
+    const message = messageInput.current.value.trim();
+    if (message) {
+      setMessages((oldMessages) => {
+        const lastId =
+          oldMessages[currentMode].length > 0
+            ? Math.max(
+                ...oldMessages[currentMode].map((msg) => msg.uniqueId || 0)
+              )
+            : 0;
+
+        return {
+          ...oldMessages,
+          [currentMode]: [
+            ...oldMessages[currentMode],
+            {
+              description: message,
+              sender: "user",
+              uniqueId: lastId + 1,
+            },
+          ],
+        };
+      });
+      messageHandler(message);
+      messageInput.current.value = "";
     }
   }
-  const [newMessage, setNewMessage] = useState('');
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  };
+
+  useEffect(() => {
+    connectToDB();
+  }, []);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages[currentMode]]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const getCharacterColor = (mode) => {
+    const colors = {
+      flipso: "#F9AF50",
+      postix: "#282989",
+      teachy: "#FEC734",
+      devix: "#9C4E1F",
+    };
+    return colors[mode] || "#ffffff";
+  };
+
   return (
     <section id="section-right">
-      <img className="background" src={sectionBackground} />
+      <img
+        className="background"
+        src={sectionBackground}
+        alt="space background"
+      />
       <div className="chat">
-        <div className="message-list">
+        <div
+          className={`chat-header ${currentMode}-theme`}
+          style={{
+            backgroundColor: `${getCharacterColor(currentMode)}22`,
+            borderBottom: `2px solid ${getCharacterColor(currentMode)}`,
+          }}
+        >
+          <img
+            src={`assets/${currentMode}/Head_face.png`}
+            alt={currentMode}
+            className="chat-avatar"
+          />
+          <span className="chat-title">
+            {currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}
+          </span>
+        </div>
+
+        <div
+          ref={chatContainerRef}
+          className={`message-list ${
+            isAnimating ? "animating" : ""
+          } ${currentMode}-mode`}
+          data-previous-mode={previousMode}
+          data-current-mode={currentMode}
+        >
           {messages[currentMode].map((message) => (
             <div
-              key={message.id}
+              key={`msg-${message.uniqueId || Math.random()}`}
               className={`message-wrapper ${
-                message.sender === 'user' ? 'message-user' : 'message-other'
-              }`} >
-              <MessageBubble text={message.text} />
+                message.sender === "user" ? "message-user" : "message-other"
+              }`}
+            >
+              <MessageBubble
+                message={message}
+                uniqueKey={`msg-${message.uniqueId || Math.random()}`}
+                characterColor={getCharacterColor(currentMode)}
+              />
             </div>
           ))}
         </div>
-        <div className="row">
-          <input className="message-input" ref={messageInput} ></input>
+
+        <div className="message-input-container">
+          <input
+            className="message-input"
+            ref={messageInput}
+            onKeyPress={handleKeyPress}
+            placeholder="Type your message..."
+          />
           <Button mode="text" text="➤" fixed={false} onClick={sendMessage} />
         </div>
       </div>

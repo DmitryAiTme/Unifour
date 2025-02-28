@@ -5,7 +5,7 @@ export default function AboutPage({ reference }) {
   const table = "assets/table.png";
   return (
     <div className="page" ref={reference}>
-      <img className="table" src={table} />
+      <img className="table" src={table} alt="about characters table" />
     </div>
-)
+  );
 }

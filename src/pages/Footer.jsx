@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import "./pages.css";
 
 export default function Footer() {
@@ -6,5 +6,5 @@ export default function Footer() {
     <footer className="footer">
       <p> Glory to Ukraine! </p>
     </footer>
-  )
+  );
 }
