@@ -2,7 +2,7 @@ import React from "react";
 import Button from "./Button.jsx";
 import "./controlsStyle.css";
 
-export default function SideMenu() {
+export default function SideMenu({inBurger = false}) {
   function goToTg() {
     return window.open("https://t.me/unifour", "_blank");
   }
@@ -16,5 +16,5 @@ export default function SideMenu() {
   const buttons = buttonNames.map((props, index) => (
     <Button key={index} {...props} />
   ));
-  return <div className="menu-side"> {buttons} </div>;
+  return <div className={`menu-side ${inBurger ? "in-burger" : ""}`}> {buttons} </div>;
 }

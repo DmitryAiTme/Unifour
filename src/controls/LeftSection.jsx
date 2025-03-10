@@ -5,7 +5,7 @@ import "./controlsStyle.css";
 
 export default function LeftSection({ currentMode, setCurrentMode }) {
   const sectionBackground = "assets/space.png";
-  const headRef = useRef();
+  const headRef = useRef(null);
   const buttonProps = [
     {
       text: "flipso",
@@ -46,7 +46,7 @@ export default function LeftSection({ currentMode, setCurrentMode }) {
         src={sectionBackground}
         alt="space background"
       />
-      <menu> {sectionButtons} </menu>
+      <div> {sectionButtons} </div>
       <section className="head-section">
         <HeadBuilder mode={currentMode} ref={headRef} />
       </section>

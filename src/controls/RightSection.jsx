@@ -1,17 +1,26 @@
 import { useState, useRef, useEffect } from "react";
 import MessageBubble from "./MessageBubble.jsx";
 import Button from "./Button.jsx";
+import TwitterModule from "../pages/TwitterModule.jsx";
+import HeadStateMachine from "./HeadStateMachine.jsx";
 import "./ChatAnimation.css";
 
 export default function RightSection({ currentMode }) {
-  const messageInput = useRef();
+  const messageInput = useRef(null);
   const chatContainerRef = useRef(null);
+  const stateMachine = useRef(null);
+  const apiUrl = /*"http://localhost:5522/backend/api"*/"https://unifour.io/backend/api";
+  const sectionBackground = "assets/space.png";
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
   const [previousMode, setPreviousMode] = useState(null);
-  const apiUrl = "https://unifour.io/backend/api";
-  const sectionBackground = "assets/space.png";
+  const [messages, setMessages] = useState({
+    devix: [],
+    postix: [],
+    flipso: [],
+    teachy: [],
+  });
 
   async function connectToDB() {
     console.log("connecting");
@@ -21,7 +30,7 @@ export default function RightSection({ currentMode }) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setPosts(sortByDate(data));
+      setPosts(data);
       console.log("Posts loaded:", data);
     } catch (err) {
       console.error("API Error:", err);
@@ -37,34 +46,67 @@ export default function RightSection({ currentMode }) {
   }
 
   function messageHandler(message) {
-    if (message.toLowerCase().includes("post") && currentMode === "postix") {
+    if (currentMode === "postix") {
+      stateMachine.current.preaction(message);
+      const replies = stateMachine.current.searchRequest(message);
+      console.log(replies);
       setMessages((oldMessages) => {
         const lastId =
-          oldMessages.postix.length > 0
-            ? Math.max(...oldMessages.postix.map((msg) => msg.uniqueId || 0))
+          oldMessages[currentMode].length > 0
+            ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
             : 0;
 
         return {
           ...oldMessages,
-          postix: [
-            ...oldMessages.postix,
-            ...posts.map((post, index) => ({
-              ...post,
+          [currentMode]: [
+            ...oldMessages[currentMode],
+            ...replies.map((reply, index) => ({
+              ...reply,
               sender: "other",
               uniqueId: lastId + index + 1,
             })),
           ],
         };
-      });
+      })
+      stateMachine.current.action(message);
     }
   }
 
-  const [messages, setMessages] = useState({
-    devix: [],
-    postix: [],
-    flipso: [],
-    teachy: [],
-  });
+  function greetMessage() {
+    if (messages[currentMode].length === 0) {
+      function greet() {
+        if (currentMode === "postix") {
+          stateMachine.current.action('');
+          return stateMachine.current.searchRequest('');
+        } else {
+          return [{
+            description: `Hello user! My name is ${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}`
+          }];
+        }
+      };
+      const objects = greet();
+      setMessages((oldMessages) => {
+        const lastId =
+          oldMessages[currentMode].length > 0
+            ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
+            : 0;
+        return {
+          ...oldMessages,
+          [currentMode]: [
+            ...oldMessages[currentMode],
+            ...objects.map((object, index) => {
+              console.log(lastId, index, 1);
+              return {
+                ...object,
+                sender: "other",
+                uniqueId: lastId + index + 1,
+              }
+            }),
+          ],
+        }
+      });
+    }
+  }
 
   useEffect(() => {
     if (previousMode && previousMode !== currentMode) {
@@ -72,20 +114,7 @@ export default function RightSection({ currentMode }) {
       setTimeout(() => {
         setIsAnimating(true);
         const animationTimeout = setTimeout(() => {
-          if (messages[currentMode].length === 0) {
-            setMessages((oldMessages) => ({
-              ...oldMessages,
-              [currentMode]: [
-                {
-                  uniqueId: 1,
-                  description: `Hello user! My name is ${
-                    currentMode.charAt(0).toUpperCase() + currentMode.slice(1)
-                  }`,
-                  sender: "other",
-                },
-              ],
-            }));
-          }
+          greetMessage();
 
           setIsAnimating(false);
         }, 500);
@@ -93,24 +122,16 @@ export default function RightSection({ currentMode }) {
         return () => clearTimeout(animationTimeout);
       }, 0);
     } else {
-      if (messages[currentMode].length === 0) {
-        setMessages((oldMessages) => ({
-          ...oldMessages,
-          [currentMode]: [
-            {
-              uniqueId: 1,
-              description: `Hello user! My name is ${
-                currentMode.charAt(0).toUpperCase() + currentMode.slice(1)
-              }`,
-              sender: "other",
-            },
-          ],
-        }));
-      }
+      greetMessage();
     }
 
     setPreviousMode(currentMode);
   }, [currentMode]);
+
+  // Handle new posts from TwitterModule
+  const handlePostsUpdated = () => {
+    connectToDB(); // Reload posts from the database
+  };
 
   const triggerAvatarAnimation = () => {
     const avatar = document.querySelector(".chat-avatar");
@@ -229,6 +250,18 @@ export default function RightSection({ currentMode }) {
             </div>
           ))}
         </div>
+
+        {currentMode === "postix" && (
+          <TwitterModule
+            apiUrl={apiUrl}
+            onPostsUpdated={handlePostsUpdated}
+          />
+        )}
+        <HeadStateMachine
+          ref={stateMachine}
+          mode={currentMode}
+          posts={posts}
+        />
 
         <div className="message-input-container">
           <input

@@ -5,13 +5,15 @@ import HomePage from "./pages/HomePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import Footer from "./pages/Footer.jsx";
 import LoadingScreen from "./pages/LoadingScreen.jsx";
+import Cookies from 'universal-cookie';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
+const cookies = new Cookies();
 
 export default function App() {
   const homePage = useRef(null);
-  const chartPage = useRef(null);
+  const aboutPage = useRef(null);
   const background = "assets/dogs.png";
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,8 +21,8 @@ export default function App() {
     let page = null;
     if (name === "Home page") {
       page = homePage;
-    } else if (name === "Chart page") {
-      page = chartPage;
+    } else if (name === "About page") {
+      page = aboutPage;
     }
     console.log(page);
     page.current?.scrollIntoView({ behavior: "smooth" });
@@ -67,10 +69,10 @@ export default function App() {
       <section className="App">
         <QueryClientProvider client={queryClient}>
           <img className="App-img" src={background} alt="dogs background" />
-          <HeaderMenu scrollToPage={scrollToPage} />
+          <HeaderMenu scrollToPage={scrollToPage} cookies={cookies} />
           <div className="body">
             <HomePage reference={homePage} />
-            <AboutPage reference={chartPage} />
+            <AboutPage reference={aboutPage} />
             <Footer />
           </div>
         </QueryClientProvider>

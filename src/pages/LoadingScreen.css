@@ -9,7 +9,7 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  background-image: url('assets/space.png');
+  background-image: url('space.png');
   background-size: cover;
   background-position: center;
   opacity: 1;
