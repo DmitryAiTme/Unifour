@@ -15,6 +15,8 @@ export default function RightSection({ currentMode }) {
   const [loading, setLoading] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
   const [previousMode, setPreviousMode] = useState(null);
+  const [showButtons, setShowButtons] = useState(false);
+  const [currentRequests, setCurrentRequests] = useState([]);
   const [messages, setMessages] = useState({
     devix: [],
     postix: [],
@@ -50,63 +52,107 @@ export default function RightSection({ currentMode }) {
       stateMachine.current.preaction(message);
       const replies = stateMachine.current.searchRequest(message);
       console.log(replies);
-      setMessages((oldMessages) => {
-        const lastId =
-          oldMessages[currentMode].length > 0
-            ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
-            : 0;
 
-        return {
-          ...oldMessages,
-          [currentMode]: [
-            ...oldMessages[currentMode],
-            ...replies.map((reply, index) => ({
-              ...reply,
-              sender: "other",
-              uniqueId: lastId + index + 1,
-            })),
-          ],
-        };
-      })
+      // In the messageHandler function, modify the setTimeout:
+      replies.forEach((reply, index) => {
+        setTimeout(() => {
+          setMessages((oldMessages) => {
+            const lastId = oldMessages[currentMode].length > 0
+              ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
+              : 0;
+
+            // Animate mouth before adding the message
+            animateMouthSpeaking();
+
+            return {
+              ...oldMessages,
+              [currentMode]: [
+                ...oldMessages[currentMode],
+                {
+                  ...reply,
+                  sender: "other",
+                  uniqueId: lastId + 1,
+                },
+              ],
+            };
+          });
+        }, index * 800); // Using existing 800ms delay
+      });
+
       stateMachine.current.action(message);
     }
   }
 
+  // Animation function to simulate mouth speaking
+  const animateMouthSpeaking = () => {
+    const chatAvatar = document.querySelector(".chat-avatar");
+    if (chatAvatar) {
+      // Add a speaking class to trigger CSS animation
+      chatAvatar.classList.add("speaking");
+
+      // Remove the class after the animation duration
+      // This duration should match your message timing
+      setTimeout(() => {
+        chatAvatar.classList.remove("speaking");
+      }, 800); // Same as your message delay
+    }
+  };
+
+  function prettyMessage(msg) {
+    return msg.replace(/[']/g, '').replace(/[^a-zA-Z]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
   function greetMessage() {
+    const key = prettyMessage('70w94v56-k0=]0-(863jv4907y34v5]');
     if (messages[currentMode].length === 0) {
       function greet() {
         if (currentMode === "postix") {
-          stateMachine.current.action('');
-          return stateMachine.current.searchRequest('');
+          stateMachine.current.action(key);
+          return stateMachine.current.searchRequest(key);
         } else {
           return [{
             description: `Hello user! My name is ${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}`
           }];
         }
       };
+
       const objects = greet();
-      setMessages((oldMessages) => {
-        const lastId =
-          oldMessages[currentMode].length > 0
-            ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
-            : 0;
-        return {
-          ...oldMessages,
-          [currentMode]: [
-            ...oldMessages[currentMode],
-            ...objects.map((object, index) => {
-              console.log(lastId, index, 1);
-              return {
-                ...object,
-                sender: "other",
-                uniqueId: lastId + index + 1,
-              }
-            }),
-          ],
-        }
+
+      // Add greeting messages with delay
+      objects.forEach((object, index) => {
+        setTimeout(() => {
+          setMessages((oldMessages) => {
+            const lastId = oldMessages[currentMode].length > 0
+              ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
+              : 0;
+
+            return {
+              ...oldMessages,
+              [currentMode]: [
+                ...oldMessages[currentMode],
+                {
+                  ...object,
+                  sender: "other",
+                  uniqueId: lastId + 1,
+                }
+              ],
+            };
+          });
+        }, index * 800); // Increased from 300ms to 800ms
       });
     }
   }
+
+  // Check for state changes that might affect button display
+  useEffect(() => {
+    if (stateMachine.current && currentMode === "postix") {
+      const { showRequests, requests } = stateMachine.current.getCurrentRequests();
+      setShowButtons(showRequests);
+      setCurrentRequests(requests);
+    } else {
+      setShowButtons(false);
+    }
+  }, [messages, currentMode]);
 
   useEffect(() => {
     if (previousMode && previousMode !== currentMode) {
@@ -145,6 +191,8 @@ export default function RightSection({ currentMode }) {
 
   function sendMessage() {
     const message = messageInput.current.value.trim();
+    const replacedMessage = prettyMessage(messageInput.current.value);
+    console.log(replacedMessage);
     if (message) {
       setMessages((oldMessages) => {
         const lastId =
@@ -166,9 +214,69 @@ export default function RightSection({ currentMode }) {
           ],
         };
       });
-      messageHandler(message);
+      messageHandler(replacedMessage);
       messageInput.current.value = "";
     }
+  }
+
+  function handleRequestButton(request) {
+    if (currentMode === "postix") {
+      stateMachine.current.preaction(request);
+      const replies = stateMachine.current.searchRequest(request);
+
+      // First add the user message
+      setMessages((oldMessages) => {
+        const lastId = oldMessages[currentMode].length > 0
+            ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
+            : 0;
+
+        return {
+          ...oldMessages,
+          [currentMode]: [
+            ...oldMessages[currentMode],
+            {
+              description: request,
+              sender: "user",
+              uniqueId: lastId + 1,
+            }
+          ],
+        };
+      });
+
+      // Then add each reply with a delay
+      replies.forEach((reply, index) => {
+        setTimeout(() => {
+          setMessages((oldMessages) => {
+            const lastId = oldMessages[currentMode].length > 0
+              ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
+              : 0;
+
+            return {
+              ...oldMessages,
+              [currentMode]: [
+                ...oldMessages[currentMode],
+                {
+                  ...reply,
+                  sender: "other",
+                  uniqueId: lastId + 1,
+                },
+              ],
+            };
+          });
+        }, (index + 1) * 800); // Increased delay to 800ms
+      });
+
+      stateMachine.current.action(request);
+
+      // Update button state after action
+      const { showRequests, requests } = stateMachine.current.getCurrentRequests();
+      setShowButtons(showRequests);
+      setCurrentRequests(requests);
+    }
+  }
+
+  function toggleInputMode() {
+    setShowButtons(!showButtons);
   }
 
   const handleKeyPress = (e) => {
@@ -264,13 +372,54 @@ export default function RightSection({ currentMode }) {
         />
 
         <div className="message-input-container">
-          <input
-            className="message-input"
-            ref={messageInput}
-            onKeyPress={handleKeyPress}
-            placeholder="Type your message..."
-          />
-          <Button mode="text" text="➤" fixed={false} onClick={sendMessage} />
+          {showButtons && currentMode === "postix" ? (
+            <>
+              <div className="request-buttons-container">
+                {currentRequests.map((request, index) => (
+                  <Button
+                    key={`request-${index}`}
+                    mode="text"
+                    text={request[0]}
+                    fixed={false}
+                    onClick={() => handleRequestButton(request[0])}
+                  />
+                ))}
+              </div>
+              <Button
+                mode="text"
+                text="⬇"
+                fixed={false}
+                onClick={toggleInputMode}
+              />
+            </>
+          ) : (
+          <>
+            <input
+              className="message-input"
+              ref={messageInput}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your message..."
+            />
+            {currentMode === "postix" && (
+            <>
+                {stateMachine.current?.getCurrentRequests().showRequests && (
+                  <Button
+                    mode="text"
+                    text="⬆"
+                    fixed={false}
+                    onClick={toggleInputMode}
+                  />
+                )}
+            </>
+            )}
+            <Button
+              mode="text"
+              text="➤"
+              fixed={false}
+              onClick={sendMessage}
+            />
+          </>
+        )}
         </div>
       </div>
     </section>

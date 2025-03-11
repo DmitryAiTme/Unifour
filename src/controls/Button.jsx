@@ -72,7 +72,7 @@ export default function Button({ mode, text, active = true, fixed = true, onClic
   } else if (mode === "socials" || mode === "image") {
     return (
       <button
-        className={`button button-${mode} ${isClickable} ${active ? "active" : "default"} ${text}`}
+        className={`button button-${mode} ${isClickable} ${active && mode === "image" ? "active" : "default"} ${text}`}
         onClick={onClick}
       >
         {text === "telegram" && <img src={socials.telegram} alt={text} />}

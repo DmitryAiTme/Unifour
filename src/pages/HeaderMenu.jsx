@@ -16,7 +16,6 @@ export default function HeaderMenu({ scrollToPage, cookies }) {
     [
       { text: "logo", mode: "logo" },
       { text: "Unifour", mode: "label", fixed: false },
-      { text: isConnected ? `Disconnect Wallet\n${publicKey.substring(0, 4)}***${publicKey.substring(publicKey.length-4)}` : "Connect Wallet", mode: "connect", fixed: false, onClick: handleWallet, active: isConnected },
       { text: "◻", mode: "burger", fixed: false, onClick: () => openBurger(burgerRef) },
     ] :
     [

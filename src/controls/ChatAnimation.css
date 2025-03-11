@@ -76,19 +76,19 @@
 }
 
 .flipso-mode .message-wrapper {
-  animation: fadeInMessage 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: fadeInMessage 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; /* increased from 0.5s to 0.8s */
 }
 
 .postix-mode .message-wrapper {
-  animation: fadeInMessage 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: fadeInMessage 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; /* increased from 0.5s to 0.8s */
 }
 
 .teachy-mode .message-wrapper {
-  animation: fadeInMessage 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: fadeInMessage 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; /* increased from 0.5s to 0.8s */
 }
 
 .devix-mode .message-wrapper {
-  animation: fadeInMessage 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: fadeInMessage 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; /* increased from 0.5s to 0.8s */
 }
 
 @keyframes fadeInMessage {
@@ -98,7 +98,7 @@
   }
 
   60% {
-    opacity: 0.8;
+    opacity: 0.6; /* reduced from 0.8 to 0.6 for a slower fade-in */
     transform: translateY(2px) scale(0.99);
   }
 
@@ -136,33 +136,46 @@
   margin-bottom: 12px;
   max-width: 80%;
   animation-fill-mode: both;
-  animation: fadeInMessage 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   opacity: 0;
 }
 
 .message-wrapper.message-user {
   transform-origin: bottom right;
+  animation: fadeInUserMessage 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
+/*.message-wrapper.message-other {
+  transform-origin: bottom left;
+}*/
 .message-wrapper.message-other {
   transform-origin: bottom left;
+  animation: fadeInOtherMessage 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
-.message-wrapper:nth-child(n+1) {
+/*.message-wrapper:nth-child(n+1) {
   animation-delay: calc(0.05s * (1));
+}*/
+.message-wrapper:nth-child(n+1) {
+  animation-delay: 0s;
 }
 
-.message-wrapper:nth-child(n+2) {
+/*.message-wrapper:nth-child(n+2) {
   animation-delay: calc(0.05s * (2));
+}*/
+.message-wrapper:nth-child(n+2) {
+  animation-delay: 0s;
 }
 
-.message-wrapper:nth-child(n+3) {
+/*.message-wrapper:nth-child(n+3) {
   animation-delay: calc(0.05s * (3));
+}*/
+.message-wrapper:nth-child(n+3) {
+  animation-delay: 0s;
 }
 
 .message-user {
   margin-left: auto;
-  animation: fadeInUserMessage 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: fadeInUserMessage 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; /* increased from 0.5s to 0.8s */
 }
 
 @keyframes fadeInUserMessage {
@@ -170,16 +183,42 @@
     opacity: 0;
     transform: translateY(10px) scale(0.97);
   }
-
   70% {
-    opacity: 0.9;
+    opacity: 0.7; /* reduced from 0.9 to 0.7 for a slower fade-in */
     transform: translateY(1px) scale(0.99);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+@keyframes fadeInOtherMessage {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  60% {
+    opacity: 0.6; /* reduced from 0.8 to 0.6 for a slower fade-in */
+    transform: translateY(2px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mouthSpeaking {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.8);
+  }
+}
+
+.chat-avatar.speaking {
+  animation: mouthSpeaking 0.4s ease-in-out;
 }
 
 .message-other {
@@ -213,26 +252,40 @@
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
 }
 
-.message-input-container .button {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+.message-input-container .dynamic-size {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-left: 0;
-  padding: 0;
+  align-content: space-between;
 }
 
-.message-input-container .dynamic-size {
-  min-width: 32px;
-  min-height: 32px;
-  max-width: 32px;
-  max-height: 32px;
-  padding: 0;
+.request-buttons-container {
+  flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: row;
+  overflow-y: auto;
+  justify-content: space-around;
+  gap: 2%;
+}
+
+.request-buttons-container .button-text {
+  width: 100%;
+}
+
+.request-button {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.request-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .message-list::-webkit-scrollbar {
