@@ -5,7 +5,7 @@ import TwitterModule from "../pages/TwitterModule.jsx";
 import HeadStateMachine from "./HeadStateMachine.jsx";
 import "./ChatAnimation.css";
 
-export default function RightSection({ currentMode }) {
+export default function RightSection({ currentMode, headRef }) {
   const messageInput = useRef(null);
   const chatContainerRef = useRef(null);
   const stateMachine = useRef(null);
@@ -17,6 +17,8 @@ export default function RightSection({ currentMode }) {
   const [previousMode, setPreviousMode] = useState(null);
   const [showButtons, setShowButtons] = useState(false);
   const [currentRequests, setCurrentRequests] = useState([]);
+  const [isStateMachineReady, setIsStateMachineReady] = useState(false);
+  const [isBotSpeaking, setIsBotSpeaking] = useState(false);
   const [messages, setMessages] = useState({
     devix: [],
     postix: [],
@@ -48,13 +50,15 @@ export default function RightSection({ currentMode }) {
   }
 
   function messageHandler(message) {
-    if (currentMode === "postix") {
+      setIsBotSpeaking(true); // Set bot speaking to true when starting to handle a message
       stateMachine.current.preaction(message);
       const replies = stateMachine.current.searchRequest(message);
       console.log(replies);
 
       // In the messageHandler function, modify the setTimeout:
+      let totalDelay = 0;
       replies.forEach((reply, index) => {
+        totalDelay = (index + 1) * 800; // Calculate total delay
         setTimeout(() => {
           setMessages((oldMessages) => {
             const lastId = oldMessages[currentMode].length > 0
@@ -76,25 +80,28 @@ export default function RightSection({ currentMode }) {
               ],
             };
           });
+
+          // If this is the last reply, set bot speaking to false after it's displayed
+          if (index === replies.length - 1) {
+            setTimeout(() => {
+              setIsBotSpeaking(false);
+            }, 500); // Short delay after the message appears
+          }
         }, index * 800); // Using existing 800ms delay
       });
 
+      // If no replies, ensure we reset the speaking state
+      if (replies.length === 0) {
+        setIsBotSpeaking(false);
+      }
+
       stateMachine.current.action(message);
-    }
   }
 
   // Animation function to simulate mouth speaking
   const animateMouthSpeaking = () => {
-    const chatAvatar = document.querySelector(".chat-avatar");
-    if (chatAvatar) {
-      // Add a speaking class to trigger CSS animation
-      chatAvatar.classList.add("speaking");
-
-      // Remove the class after the animation duration
-      // This duration should match your message timing
-      setTimeout(() => {
-        chatAvatar.classList.remove("speaking");
-      }, 800); // Same as your message delay
+    if (headRef.current && headRef.current.speak) {
+      headRef.current.speak();
     }
   };
 
@@ -103,23 +110,21 @@ export default function RightSection({ currentMode }) {
   }
 
   function greetMessage() {
-    const key = prettyMessage('70w94v56-k0=]0-(863jv4907y34v5]');
+    const key = prettyMessage('wvkjvyvoiptag');
     if (messages[currentMode].length === 0) {
+      setIsBotSpeaking(true); // Set speaking to true during greeting
+
       function greet() {
-        if (currentMode === "postix") {
-          stateMachine.current.action(key);
-          return stateMachine.current.searchRequest(key);
-        } else {
-          return [{
-            description: `Hello user! My name is ${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}`
-          }];
-        }
+        stateMachine.current.action(key);
+        return stateMachine.current.searchRequest(key);
       };
 
       const objects = greet();
+      let totalDelay = 0;
 
       // Add greeting messages with delay
       objects.forEach((object, index) => {
+        totalDelay = (index + 1) * 800; // Calculate total delay
         setTimeout(() => {
           setMessages((oldMessages) => {
             const lastId = oldMessages[currentMode].length > 0
@@ -138,14 +143,44 @@ export default function RightSection({ currentMode }) {
               ],
             };
           });
+
+          // If this is the last message, set speaking to false
+          if (index === objects.length - 1) {
+            setTimeout(() => {
+              setIsBotSpeaking(false);
+            }, 500); // Short delay after the message appears
+          }
         }, index * 800); // Increased from 300ms to 800ms
       });
+
+      // If no greeting messages, ensure we reset the speaking state
+      if (objects.length === 0) {
+        setIsBotSpeaking(false);
+      }
     }
+  }
+
+  function greetAnimation() {
+    if (previousMode && previousMode !== currentMode) {
+      setIsAnimating(false);
+      setTimeout(() => {
+        setIsAnimating(true);
+        const animationTimeout = setTimeout(() => {
+          greetMessage();
+          setIsAnimating(false);
+        }, 500);
+
+        return () => clearTimeout(animationTimeout);
+      }, 0);
+    } else {
+      greetMessage();
+    }
+    setPreviousMode(currentMode);
   }
 
   // Check for state changes that might affect button display
   useEffect(() => {
-    if (stateMachine.current && currentMode === "postix") {
+    if (stateMachine.current) {
       const { showRequests, requests } = stateMachine.current.getCurrentRequests();
       setShowButtons(showRequests);
       setCurrentRequests(requests);
@@ -155,24 +190,17 @@ export default function RightSection({ currentMode }) {
   }, [messages, currentMode]);
 
   useEffect(() => {
-    if (previousMode && previousMode !== currentMode) {
-      setIsAnimating(false);
-      setTimeout(() => {
-        setIsAnimating(true);
-        const animationTimeout = setTimeout(() => {
-          greetMessage();
-
-          setIsAnimating(false);
-        }, 500);
-
-        return () => clearTimeout(animationTimeout);
-      }, 0);
-    } else {
-      greetMessage();
+    if (stateMachine.current && !isStateMachineReady) {
+      setIsStateMachineReady(true);
     }
+  }, [stateMachine.current]);
 
-    setPreviousMode(currentMode);
-  }, [currentMode]);
+  // Modify your existing useEffect to use the state variable
+  useEffect(() => {
+    if (isStateMachineReady) {
+      greetAnimation();
+    }
+  }, [currentMode, isStateMachineReady]);
 
   // Handle new posts from TwitterModule
   const handlePostsUpdated = () => {
@@ -193,7 +221,7 @@ export default function RightSection({ currentMode }) {
     const message = messageInput.current.value.trim();
     const replacedMessage = prettyMessage(messageInput.current.value);
     console.log(replacedMessage);
-    if (message) {
+    if (message && !isBotSpeaking) { // Only send if bot is not currently speaking
       setMessages((oldMessages) => {
         const lastId =
           oldMessages[currentMode].length > 0
@@ -220,67 +248,84 @@ export default function RightSection({ currentMode }) {
   }
 
   function handleRequestButton(request) {
-    if (currentMode === "postix") {
-      stateMachine.current.preaction(request);
-      const replies = stateMachine.current.searchRequest(request);
+    if (isBotSpeaking) return; // Skip if bot is currently speaking
 
-      // First add the user message
-      setMessages((oldMessages) => {
-        const lastId = oldMessages[currentMode].length > 0
+    setIsBotSpeaking(true); // Set bot speaking to true
+    stateMachine.current.preaction(request);
+    const replies = stateMachine.current.searchRequest(request);
+
+    // First add the user message
+    setMessages((oldMessages) => {
+      const lastId = oldMessages[currentMode].length > 0
+        ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
+        : 0;
+
+      return {
+        ...oldMessages,
+        [currentMode]: [
+          ...oldMessages[currentMode],
+          {
+            description: request,
+            sender: "user",
+            uniqueId: lastId + 1,
+          }
+        ],
+      };
+    });
+
+    // Then add each reply with a delay
+    let totalDelay = 0;
+    replies.forEach((reply, index) => {
+      totalDelay = (index + 1) * 800; // Calculate total delay
+      setTimeout(() => {
+        setMessages((oldMessages) => {
+          const lastId = oldMessages[currentMode].length > 0
             ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
             : 0;
 
-        return {
-          ...oldMessages,
-          [currentMode]: [
-            ...oldMessages[currentMode],
-            {
-              description: request,
-              sender: "user",
-              uniqueId: lastId + 1,
-            }
-          ],
-        };
-      });
+          return {
+            ...oldMessages,
+            [currentMode]: [
+              ...oldMessages[currentMode],
+              {
+                ...reply,
+                sender: "other",
+                uniqueId: lastId + 1,
+              },
+            ],
+          };
+        });
 
-      // Then add each reply with a delay
-      replies.forEach((reply, index) => {
-        setTimeout(() => {
-          setMessages((oldMessages) => {
-            const lastId = oldMessages[currentMode].length > 0
-              ? Math.max(...oldMessages[currentMode].map((msg) => msg.uniqueId || 0))
-              : 0;
+        // If this is the last reply, set bot speaking to false
+        if (index === replies.length - 1) {
+          setTimeout(() => {
+            setIsBotSpeaking(false);
+          }, 500); // Short delay after the message appears
+        }
+      }, (index + 1) * 800); // Increased delay to 800ms
+    });
 
-            return {
-              ...oldMessages,
-              [currentMode]: [
-                ...oldMessages[currentMode],
-                {
-                  ...reply,
-                  sender: "other",
-                  uniqueId: lastId + 1,
-                },
-              ],
-            };
-          });
-        }, (index + 1) * 800); // Increased delay to 800ms
-      });
-
-      stateMachine.current.action(request);
-
-      // Update button state after action
-      const { showRequests, requests } = stateMachine.current.getCurrentRequests();
-      setShowButtons(showRequests);
-      setCurrentRequests(requests);
+    // If no replies, ensure we reset the speaking state
+    if (replies.length === 0) {
+      setIsBotSpeaking(false);
     }
+
+    stateMachine.current.action(request);
+
+    // Update button state after action
+    const { showRequests, requests } = stateMachine.current.getCurrentRequests();
+    setShowButtons(showRequests);
+    setCurrentRequests(requests);
   }
 
   function toggleInputMode() {
-    setShowButtons(!showButtons);
+    if (!isBotSpeaking) { // Only allow toggle if bot is not speaking
+      setShowButtons(!showButtons);
+    }
   }
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !isBotSpeaking) { // Only handle Enter if bot is not speaking
       sendMessage();
     }
   };
@@ -309,6 +354,13 @@ export default function RightSection({ currentMode }) {
     };
     return colors[mode] || "#ffffff";
   };
+
+  // CSS for disabled buttons
+  const disabledStyle = isBotSpeaking ? {
+    opacity: 0.5,
+    pointerEvents: "none",
+    cursor: "not-allowed"
+  } : {};
 
   return (
     <section id="section-right">
@@ -358,13 +410,10 @@ export default function RightSection({ currentMode }) {
             </div>
           ))}
         </div>
-
-        {currentMode === "postix" && (
-          <TwitterModule
-            apiUrl={apiUrl}
-            onPostsUpdated={handlePostsUpdated}
-          />
-        )}
+        <TwitterModule
+          apiUrl={apiUrl}
+          onPostsUpdated={handlePostsUpdated}
+        />
         <HeadStateMachine
           ref={stateMachine}
           mode={currentMode}
@@ -372,9 +421,9 @@ export default function RightSection({ currentMode }) {
         />
 
         <div className="message-input-container">
-          {showButtons && currentMode === "postix" ? (
+          {showButtons ? (
             <>
-              <div className="request-buttons-container">
+              <div className="request-buttons-container" style={disabledStyle}>
                 {currentRequests.map((request, index) => (
                   <Button
                     key={`request-${index}`}
@@ -390,6 +439,7 @@ export default function RightSection({ currentMode }) {
                 text="⬇"
                 fixed={false}
                 onClick={toggleInputMode}
+                style={disabledStyle}
               />
             </>
           ) : (
@@ -399,24 +449,26 @@ export default function RightSection({ currentMode }) {
               ref={messageInput}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
+              disabled={isBotSpeaking} // Disable input when bot is speaking
+              style={isBotSpeaking ? {opacity: 0.5} : {}}
             />
-            {currentMode === "postix" && (
             <>
-                {stateMachine.current?.getCurrentRequests().showRequests && (
-                  <Button
-                    mode="text"
-                    text="⬆"
-                    fixed={false}
-                    onClick={toggleInputMode}
-                  />
-                )}
+              {stateMachine.current?.getCurrentRequests().showRequests && (
+                <Button
+                  mode="text"
+                  text="⬆"
+                  fixed={false}
+                  onClick={toggleInputMode}
+                  style={disabledStyle}
+                />
+              )}
             </>
-            )}
             <Button
               mode="text"
               text="➤"
               fixed={false}
               onClick={sendMessage}
+              style={disabledStyle}
             />
           </>
         )}

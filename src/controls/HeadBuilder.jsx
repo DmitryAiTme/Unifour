@@ -126,8 +126,19 @@ export default function HeadBuilder({ mode, ref }) {
         resetAnimations();
         updateSequences(newAssets);
       },
+      // Add a new speak method
+      speak() {
+        // Clear any existing speak animation
+        if (speakIntervalRef.current) {
+          clearInterval(speakIntervalRef.current);
+          speakIntervalRef.current = null;
+        }
+
+        // Play the mouth animation sequence
+        animation(mouthSequence, setMouth);
+      }
     }),
-    [mode]
+    [mode, mouthSequence]
   );
 
   return (

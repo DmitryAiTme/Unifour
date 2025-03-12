@@ -5,7 +5,7 @@ export default function LoadingScreen({ onFinishLoading }) {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [showScreen, setShowScreen] = useState(true);
   const [isFadingOut, setIsFadingOut] = useState(false);
-  const charactersOrder = ["flipso", "postix", "teachy", "devix"];
+  const charactersOrder = ["flipso", "postix", "devix", "teachy"];
   const characters = {
     flipso: "assets/flipso/Head_face.png",
     postix: "assets/postix/Head_face.png",

@@ -3,9 +3,8 @@ import Button from "./Button.jsx";
 import HeadBuilder from "./HeadBuilder.jsx";
 import "./controlsStyle.css";
 
-export default function LeftSection({ currentMode, setCurrentMode }) {
+export default function LeftSection({ currentMode, setCurrentMode, headRef }) {
   const sectionBackground = "assets/space.png";
-  const headRef = useRef(null);
   const buttonProps = [
     {
       text: "flipso",
@@ -20,16 +19,16 @@ export default function LeftSection({ currentMode, setCurrentMode }) {
       active: currentMode === "postix",
     },
     {
-      text: "teachy",
-      mode: "image",
-      onClick: () => clickHandle("teachy"),
-      active: currentMode === "teachy",
-    },
-    {
       text: "devix",
       mode: "image",
       onClick: () => clickHandle("devix"),
       active: currentMode === "devix",
+    },
+    {
+      text: "teachy",
+      mode: "image",
+      onClick: () => clickHandle("teachy"),
+      active: currentMode === "teachy",
     },
   ];
   const sectionButtons = buttonProps.map((props, index) => (

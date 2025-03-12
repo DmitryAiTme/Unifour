@@ -14,6 +14,7 @@ const cookies = new Cookies();
 export default function App() {
   const homePage = useRef(null);
   const aboutPage = useRef(null);
+  const names = ["flipso", "postix", "teachy", "devix"];
   const background = "assets/dogs.png";
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,7 +25,6 @@ export default function App() {
     } else if (name === "About page") {
       page = aboutPage;
     }
-    console.log(page);
     page.current?.scrollIntoView({ behavior: "smooth" });
   }
 
@@ -32,7 +32,21 @@ export default function App() {
     setIsLoading(false);
   };
 
+  function characters(name) {
+    const assetsArray = [];
+    let i = 0;
+    for (i = 0; i < 4; ++i) {
+      assetsArray.push(`assets/${name}/eyes/Eyes${i + 1}.png`);
+    }
+    for (i = 0; i < 8; ++i) {
+      assetsArray.push(`assets/${name}/mouth/Mouth${i + 1}.png`);
+    }
+    return assetsArray;
+  }
+
   useEffect(() => {
+    const assetsArray = []
+    names.forEach((name) => characters(name).forEach((asset) => assetsArray.push(asset)));
     const imageUrls = [
       background,
       "logo.png",
@@ -41,6 +55,7 @@ export default function App() {
       "assets/flipso/Head_face.png",
       "assets/teachy/Head_face.png",
       "assets/space.png",
+      ...assetsArray
     ];
 
     const preloadImages = async () => {
