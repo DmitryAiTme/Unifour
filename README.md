@@ -3,7 +3,7 @@
 ## Tech Stack
 
 ### Frontend
-- **React** 19.0.0 
+- **React** 19.0.0 - A free and open-source front-end JavaScript library that aims to make building user interfaces based on components more "seamless".
 - **Material UI** 6.4.6 - Component library that implements Google's Material Design. Used for adaptive interface.
 - **Axios** 1.8.1 - Promise based HTTP client for the browser and node.js. Used with Twitter API.
 - **Vite** 6.0.11 - Build tool that aims to provide a faster and leaner development experience for modern web projects.
@@ -16,14 +16,14 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
 ### Backend
-- **Node.js** 21.6.2
+- **Node.js** 21.6.2 - A free, open-source, cross-platform JavaScript runtime environment that lets developers create servers, web apps, command line tools and scripts.
 - **Express** 4.21.2 - Backend web application framework for building RESTful APIs with Node.js.
 - **Cors** 2.8.5 - Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism.
 - **Dotenv** 16.4.7 - We use file .env for DB and Twitter API configurations.
 - **MySQL2** 3.12.0 - DBMS that available on host. Also you can use your own solution.
 
 ### Package Management
-- **NPM** 10.4.0
+- **NPM** 10.4.0 - The standard package manager for Node.js
 
 ### Features
 - We use cookies for storing your wallet address.
@@ -33,11 +33,11 @@ Currently, two official plugins are available:
 
 - **Python** 3.10.2 (It's necessary to use this version or lower in terms of compatibility)
 - **PySide6** - Used for convenience, for user interface
-- **TensorFlow** 2.8.4
-- **tflearn** 0.5.0
-- **nltk**
-- **numpy**
-- **pickle**
+- **TensorFlow** 2.8.4 - A software library for machine learning and artificial intelligence.
+- **tflearn** 0.5.0 - A modular and transparent deep learning library built on top of Tensorflow.
+- **nltk** - A leading platform for building Python programs to work with human language data.
+- **numpy** - A library for adding support for large, multi-dimensional arrays and matrices, and high-level mathematical functions.
+- **pickle** - This module implements binary protocols for serializing and de-serializing a Python object structure.
 
 ## Learning Process
 1. HTML Parser for dataset
@@ -80,14 +80,6 @@ npm install
 
 # 8. Start the backend server
 npm run start
-```
-
-## Project Structure
-```
-Unifour/
-├── frontend/         # React application
-├── backend/          # Express server
-└── ...               # Other files and directories
 ```
 
 ## Contributing
