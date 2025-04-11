@@ -1,5 +1,13 @@
 # Unifour
 
+## Twitter API Integration
+
+The following diagram illustrates the workflow of our Twitter API integration:
+
+![Twitter API Workflow Diagram](./assets/twitter-api-workflow-diagram.png)
+
+This process handles the scheduling, authentication, data fetching, and storage of tweets from the Twitter API.
+
 ## Tech Stack
 
 ### Frontend
