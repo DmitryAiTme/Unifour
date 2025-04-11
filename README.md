@@ -8,6 +8,8 @@ The following diagram illustrates the workflow of our Twitter API integration:
 <p align="center"><img src="./assets/twitter-api-workflow-diagram.png" alt="Twitter API Workflow Diagram"/></p>
 This process handles the scheduling, authentication, data fetching, and storage of tweets from the Twitter API.
 
+<ins>We will add information about other agents soon!</ins>
+
 ## Tech Stack
 
 ### Frontend
@@ -102,6 +104,7 @@ To contribute to this project:
 GPL-3.0 license
 
 ## Contact
-1. Webpage https://unifour.io/
+1. Webpage https://unifour.io
 2. Telegram https://t.me/unifourchanel
 3. X https://x.com/UnifourLabs
+4. Docs: https://docs.fuoniur.io
