@@ -1,11 +1,11 @@
 # Unifour
 
+<p align="center"><img src="./assets/cover.jpg" alt="Welcome cover image"/></p>
+
 ## Twitter API Integration
 
 The following diagram illustrates the workflow of our Twitter API integration:
-
-<p align="center">!<img src="./assets/twitter-api-workflow-diagram.png" alt="Twitter API Workflow Diagram"/></p>
-
+<p align="center"><img src="./assets/twitter-api-workflow-diagram.png" alt="Twitter API Workflow Diagram"/></p>
 This process handles the scheduling, authentication, data fetching, and storage of tweets from the Twitter API.
 
 ## Tech Stack
@@ -104,4 +104,4 @@ GPL-3.0 license
 ## Contact
 1. Webpage https://unifour.io/
 2. Telegram https://t.me/unifourchanel
-3. X https://x.com/unifour_SOL
+3. X https://x.com/UnifourLabs
