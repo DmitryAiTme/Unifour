@@ -4,7 +4,7 @@
 
 The following diagram illustrates the workflow of our Twitter API integration:
 
-![Twitter API Workflow Diagram](./assets/twitter-api-workflow-diagram.png)
+<p align="center">!<img src="./assets/twitter-api-workflow-diagram.png" alt="Twitter API Workflow Diagram"/></p>
 
 This process handles the scheduling, authentication, data fetching, and storage of tweets from the Twitter API.
 
