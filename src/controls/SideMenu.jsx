@@ -4,12 +4,15 @@ import "./controlsStyle.css";
 
 export default function SideMenu({inBurger = false}) {
   function goToTg() {
-    return window.open("https://t.me/unifour", "_blank");
+    return window.open("https://t.me/unifourchanel", "_blank");
+  }
+  function goToX() {
+    return window.open("https://x.com/UnifourLabs", "_blank");
   }
 
   const buttonNames = [
     { text: "telegram", mode: "socials", onClick: goToTg },
-    { text: "x", mode: "socials" },
+    { text: "x", mode: "socials", onClick: goToX },
     { text: "dex", mode: "socials" },
     { text: "pump", mode: "socials" },
   ];

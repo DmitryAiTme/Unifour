@@ -4,12 +4,14 @@ import Button from "./Button.jsx";
 import TwitterModule from "../pages/TwitterModule.jsx";
 import HeadStateMachine from "./HeadStateMachine.jsx";
 import "./ChatAnimation.css";
+// const host = 'http://localhost:5522';
+const host = 'https://unifour.io';
 
 export default function RightSection({ currentMode, headRef }) {
   const messageInput = useRef(null);
   const chatContainerRef = useRef(null);
   const stateMachine = useRef(null);
-  const apiUrl = /*"http://localhost:5522/backend/api"*/"https://unifour.io/backend/api";
+  const apiUrl = `${host}/backend/api`;
   const sectionBackground = "assets/space.png";
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,15 +29,13 @@ export default function RightSection({ currentMode, headRef }) {
   });
 
   async function connectToDB() {
-    console.log("connecting");
     try {
       const response = await fetch(`${apiUrl}/posts2`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setPosts(data);
-      console.log("Posts loaded:", data);
+      setPosts(data);;
     } catch (err) {
       console.error("API Error:", err);
     } finally {

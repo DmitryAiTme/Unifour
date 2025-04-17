@@ -13,9 +13,38 @@ export default function MessageBubble({
     if (text) {
       return text.toString()
         .split("\n")
-        .map((txt, i) => <p key={`${baseKey}-${i}`}>{txt}</p>);
+        .map((txt, i) => (
+          <p key={`${baseKey}-${i}`}>
+            {processTextWithLinks(txt)}
+          </p>
+        ));
     }
     return <p>{text}</p>;
+  }
+
+  function processTextWithLinks(text) {
+    // Regular expression to match URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    // Split the text into parts with links
+    const parts = text.split(urlRegex);
+
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#1DA1F2', textDecoration: 'underline' }}
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
   }
 
   const paragraphs = splitIntoParagraphs(
@@ -38,13 +67,13 @@ export default function MessageBubble({
       }
     >
       {message.name && (
-        <pre>{`${message.name}\n@${message.username || ""}`}</pre>
+        <pre>{`${message.name || ""}`}</pre>
       )}
 
       <div className="message-content">
         {paragraphs}
-        {message.media && (
-          <img alt="post image" src={`/backend/public/posts/${message.media}`} />
+        {message.media && !hasQuote && (
+          <img alt="post image" src={message.media} />
         )}
       </div>
 
@@ -60,16 +89,17 @@ export default function MessageBubble({
           }}
         >
           {message.q_name && (
-            <pre>{`${message.q_name}\n@${message.q_username || ""}`}</pre>
+            <pre>{`${message.q_name || ""} ${message.q_username || ""}`}</pre>
           )}
           <div className="quoted-content">
             {splitIntoParagraphs(message.q_description, `qdesc-${uniqueKey}`)}
-            {message.q_media && (
-              <img alt="quoted post image" src={`/backend/public/posts/${message.q_media}`} />
+            {message.media && (
+              <img alt="quoted post image" src={message.media} />
             )}
           </div>
         </div>
       )}
+      { message.link && <p><a href={message.link}> View post </a></p>}
     </div>
   );
 }

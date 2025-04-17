@@ -70,12 +70,23 @@ export default function HeadStateMachine({ ref, mode, posts }) {
   }
 
   function postixChoice(user) {
+    const postList = handlePosts(user);
     return [
-      {description: `Great choice! Fetching the 5 latest posts from ${user}...`},
-      ...posts,
+      {description: `Great choice! Fetching the ${postList.length} latest posts from ${user}...`},
+      ...postList,
       {description: "That's all the posts I can show for now. Want to check another account?"}
     ]
   };
+
+  function handlePosts(user) {
+    const postList = []
+    for (const post of posts) {
+      if (post.username === user && postList.length < 5) {
+        postList.push(post)
+      }
+    }
+    return postList
+  }
 
   const pool = {
     postix: [
@@ -133,7 +144,7 @@ export default function HeadStateMachine({ ref, mode, posts }) {
         answer: [
           {
             preaction: () => {},
-            phrases: [postixChoice("Elon Musk")],
+            phrases: [postixChoice("elonmusk")],
             action: () => updateCurrentState("another")
           },
           {
@@ -143,7 +154,7 @@ export default function HeadStateMachine({ ref, mode, posts }) {
           },
           {
             preaction: () => {},
-            phrases: [postixChoice("Pump Fun")],
+            phrases: [postixChoice("pumpdotfun")],
             action: () => updateCurrentState("another")
           }
         ],

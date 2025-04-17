@@ -20,7 +20,7 @@ export default function HeaderMenu({ scrollToPage, cookies }) {
     ] :
     [
       { text: "logo", mode: "logo" },
-      { text: "⬆", mode: "text" },
+      { text: "Button", mode: "text" },
       { text: "AI Agents", mode: "text", onClick: goToHome },
       { text: "Roadmap", mode: "text", onClick: openRoadmap },
       { text: "Whitepaper", mode: "text", onClick: openWhitepaper },
